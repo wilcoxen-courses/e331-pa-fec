@@ -10,7 +10,7 @@ Several input files are available from the class Google Drive folder: **contrib_
 
 ### Deliverables
 
-There are six deliverables: a script called **pop.py** that retrieves population data from the Census API server; one called **by_party.py** that aggregates the contribution data to parties rather than candidates, as was done in the previous exercise; a script called **join.py** that joins the population and contribution results onto the zip layer in the geopackage file to build a new geopackage file called `"joined.gpkg"`; a QGIS project file called **contrib.qgz**, and two images: **map_pc.png** and **map_party.png**
+There are seven deliverables: a script called **pop.py** that retrieves population data from the Census API server; one called **by_party.py** that aggregates the contribution data to parties rather than candidates, as was done in the previous exercise; a script called **join.py** that joins the population and contribution results onto the zip layer in the geopackage file to build a new geopackage file called `"joined.gpkg"`; a QGIS project file called **contrib.qgz**, and three images: **map_party.png**, **map_pc.png** and **map_funds.png**.
 
 ### Instructions
 
@@ -90,7 +90,7 @@ There are six deliverables: a script called **pop.py** that retrieves population
 
 1. For convenience, now read the state boundary layer from the original geopackage file by setting `geo_state` to the result of using `geopandas.read_file()` to read `"cb_2019_42_zcta510_500k.gpkg"` with `layer="state"`. Then use the `.to_file()` method to write it out to `"joined.gpkg"` using `layer="state"`.
 
-**D. Maps map_party.png and map_pc.png** 
+**D. Maps map_party.png, map_pc.png and map_funds.png** 
 
 1. Start QGIS and load both layers from `"joined.gpkg"`. 
 
@@ -105,6 +105,10 @@ There are six deliverables: a script called **pop.py** that retrieves population
 1. The party map shows the mix of contributions but it's only part of the story because it doesn't say anything about the intensity of contributions from each zip code. To get at that, we'll look at per capita contributions. Duplicate the `party` layer and rename it `pc`. Then turn off the `party` layer by unchecking its box and turn on the new `pc` layer. Change the variable driving the "Graduated" style to `"pc"`, change the color ramp to "Greens", set the mode to "Natural Breaks", and use 4 classes. If all goes well, you should see that per capita contributions are actually very small for most of the state. However, they are very high for some zip codes near Philadelphia (on the east), and fairly high for some near Pittsburgh (on the west) and at a few other places scattered around the state.
 
 1. Export the map as an image to `"map_pc.png"`.
+
+1. The maps above show the preferences of people in different zip codes but they don't convey overall fundraising. To get at that, duplicate the `pc` layer and rename it `funds`. Then turn off `pc` and turn on `funds`. Set the style for `funds` to "Single Symbol" and set the fill color to something pretty light. Then add pie diagrams. For the pie attributes, choose `"DEM"` and `"REP"` and set the colors to blue and red. Then set the size of the pies to "Scaled Size" using the `"total"` attribute for scaling. Click "Find" to find the maximum value of `"total"`, and then set the "Size" to 15. Make sure that the "Size Units" selector at the top of the dialog is set to millimeters.
+
+1. Export the map to `"map_funds.png`".
 
 1. Save the QGIS project file as `"contrib.qgz`".
 
