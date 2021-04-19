@@ -20,7 +20,7 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Build a dataframe called `pop` from the server's response.
 
-1. Use a dictionary called `new_names` to rename columns `"B01001_001E"` to `"pop"` (same as the dataframe itself) and `"zip code tabulation area"` to "`zip'".
+1. Use a dictionary called `new_names` to rename columns `"B01001_001E"` to `"pop"` (same as the dataframe itself) and `"zip code tabulation area"` to `"zip"`.
 
 1. Set the index of `pop` to `"zip"` and then save the dataframe to `"pop.csv"`.
 
