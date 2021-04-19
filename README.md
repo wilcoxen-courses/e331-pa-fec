@@ -80,6 +80,8 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Next create a column called `"d_share"` in `trim` giving the share of total contributions that went to Democratic candidates.
 
+1. Save `trim` as `"join.csv"` using `index=False`. Note that the name is `"join.csv"` to match the name of the script for clarity when looking at the directory in the future.
+
 1. Now read the zip code layer of geopackage file by setting `geo_zip` to the result of calling `geopandas.read_file()` with arguments `"cb_2019_42_zcta510_500k.gpkg"` and `layer="zip"`. 
 
 1. Set `joined` to the result of doing a left one-to-one join of `trim` onto `geo_zip`. Use `left_on="ZCTA5CE10"` and `right_on="zip"` to set the join keys since the column names are different. Also, set the indicator to True. A left join is appropriate because we want to keep all of the zip codes in the shape file and want to discard any zip codes that don't match (the bad zip codes discussed above).
