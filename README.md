@@ -106,7 +106,7 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Export the map as an image to `"map_pc.png"`.
 
-1. The maps above show the preferences of people in different zip codes but they don't convey overall fundraising. To get at that, duplicate the `pc` layer and rename it `funds`. Then turn off `pc` and turn on `funds`. Set the style for `funds` to "Single Symbol" and set the fill color to something pretty light. Then add pie diagrams. For the pie attributes, choose `"DEM"` and `"REP"` and set the colors to blue and red. Then set the size of the pies to "Scaled Size" using the `"total"` attribute for scaling. Click "Find" to find the maximum value of `"total"`, and then set the "Size" to 15. Make sure that the "Size Units" selector at the top of the dialog is set to millimeters.
+1. The maps above show the preferences of people in different zip codes but they don't convey overall fundraising. To get at that, we'll build a map with pie charts indicating total funding by party from each zip code. Duplicate the `pc` layer and rename it `funds`. Then turn off `pc` and turn on `funds`. Set the style for `funds` to "Single Symbol" and set the fill color to something pretty light. Then add pie diagrams. For the pie attributes, choose `"DEM"` and `"REP"` and set the colors to blue and red. Then set the size of the pies to "Scaled Size" using the `"total"` attribute for scaling. Click "Find" to find the maximum value of `"total"`, and then set the "Size" to 15. Make sure that the "Size Units" selector at the top of the dialog is set to millimeters.
 
 1. Export the map to `"map_funds.png`".
 
