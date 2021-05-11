@@ -68,7 +68,9 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Create `summary` by applying the `.agg()` method to column `"total"` of `grouped` using the argument `["count","sum","mean"]`. The result will be a dataframe with three columns of aggregate information: the record count for each case of `"_merge"`, and the sum and the mean as well. Note that these are totals by zip code, so the means are much larger than a typical individual contribution.
 
-1. Now set `trim` to the result of using `.query()` to pick out the records where `"_merge"` is not equal to `"right_only"` (that is, keep the `"both"` and "`left_only"` records), and then add `.copy()` to the end of the statement to cause Pandas to create a copy of the data rather than a view.
+1. Print `summary`.
+
+1. Now set `trim` to the result of using `.query()` to pick out the records of `both` where `"_merge"` is not equal to `"right_only"` (that is, keep the `"both"` and "`left_only"` records), and then add `.copy()` to the end of the statement to cause Pandas to create a copy of the data rather than a view.
 
 1. Drop `"_merge"` from `trim`.
 
