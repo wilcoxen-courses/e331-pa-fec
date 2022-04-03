@@ -19,12 +19,16 @@ print(raw)
 
 #%%
 #
-#  Remove leading and trailing spaces the name column
+#  Make names consistent in case and spacing
 #
 
 mod = raw.copy()
 
-mod['name'] = mod['name'].str.strip()
+name = mod['name'].str.lower()
+name_parts = name.str.split()
+name_clean = name_parts.apply(' '.join)
+
+mod['name'] = name_clean
 
 print('\nAfter removing leading and trailing spaces from name:')
 print(mod)
@@ -54,8 +58,8 @@ values = mod['value']
 #  Make two variables, one with the non-digits removed, leaving the
 #  numbers, and one with the digits removed, leaving the units
 
-value_part = values.str.replace('\D|\s','',regex=True)
-unit_part  = values.str.replace('\d|\s','',regex=True)
+value_part = values.str.replace(r'\D|\s','',regex=True)
+unit_part  = values.str.replace(r'\d|\s','',regex=True)
 
 #  Put the columns into the dataframe to show what happened
 
@@ -102,7 +106,7 @@ print( mod )
 units = mod['comb_units']
 
 units = units.str.lower()
-units = units.str.replace('\W','',regex=True)
+units = units.str.replace(r'\W','',regex=True)
 units = units.str.strip()
 
 spellout = {'ft':'feet',
