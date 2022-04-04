@@ -1,6 +1,6 @@
 name,value,units
-alpha,50, FT.
-beta  , 10, yards /;
-  gamma,22ft
-delta,4 yds
-epsilon ,30
+alpha   Team,50, FT.
+beta  team  , 10, yards /;
+  gamma teaM,22ft
+delta   team,4 yds
+epsilon   TEAM,30
