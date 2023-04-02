@@ -6,7 +6,7 @@ This exercise maps contributions to presidential candidates by party in the 2020
 
 ## Input Data
 
-Several input files are available from the class Google Drive folder: **contrib_clean.pkl**, a pickled version of the aggregated individual contribution data from the previous exercise on campaign contributions; **com_cand_info.csv**, another file from the previous assignment that links committees, candidates, and parties; and **cb_2019_42_zcta510_500k.gpkg**, a geopackage file containing two layers: `state`, which is the boundary for Pennsylvania itself, and `zip`, which has boundaries for all of the state's zip codes. See the tips section if you're interested in what the `_500k` in the file name means.
+Several input files are available from the class Google Drive folder: **contrib_clean.pkl**, a pickled version of the aggregated individual contribution data from the previous exercise on campaign contributions; **com_cand_info.csv**, another file from the previous assignment that links committees, candidates, and parties; and **cb_2019_42_zcta510_500k.gpkg**, a geopackage file containing two layers: `state`, which is the boundary for Pennsylvania itself, and `zip`, which has boundaries for all of the state's ZCTAs (zip code tabulation areas, or just zip codes below). See the tips section if you're interested in what the `_500k` in the file name means.
 
 ## Deliverables
 
@@ -92,9 +92,9 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Print the value counts of the merge indicator and then drop it.
 
-1. _Save the joined layer._ Write out the joined layer to layer `"zip"` of geopackage `"joined.gpkg"` by calling `.to_file()` on `joined` using arguments `"joined.gpkg"`, `layer="zip"`, and `index=False`. Note that if `"joined.gpkg"` already exists, this call will add (or replace) layer `"zip"` but won't affect any other layers. To be sure that you get a clean copy of the file, you may want to remove any existing version of `"joined.gpkg"` before running this part of the script.
+1. _Save the joined layer._ Write out the joined layer to layer `"zip"` of geopackage `"joined.gpkg"` by calling `.to_file()` on `joined` using arguments `"joined.gpkg"` and `layer="zip"`. Note that if `"joined.gpkg"` already exists, this call will add (or replace) layer `"zip"` but won't affect any other layers. To be sure that you get a clean copy of the file, you may want to remove any existing version of `"joined.gpkg"` before running this part of the script.
 
-1. _Save the state border._ For convenience, now read the state boundary layer from the original geopackage file by setting `geo_state` to the result of using `gpd.read_file()` to read `"cb_2019_42_zcta510_500k.gpkg"` with `layer="state"`. Then use the `.to_file()` method to write it out to `"joined.gpkg"` using `layer="state"` and `index=False`.
+1. _Save the state border._ For convenience, now read the state boundary layer from the original geopackage file by setting `geo_state` to the result of using `gpd.read_file()` to read `"cb_2019_42_zcta510_500k.gpkg"` with `layer="state"`. Then use the `.to_file()` method to write it out to `"joined.gpkg"` using `layer="state"`.
 
 ### D. Maps map_party.png, map_pc.png and map_funds.png
 
@@ -125,11 +125,13 @@ Once you're happy with everything and have committed all of the changes to your 
 ## Tips
 
 + The cartographic boundary files are lower resolution, and hence smaller in file size, than TIGER/Line files. They are very suitable for thematic maps (such as the one in this exercise) where precise distance measurements are not needed. The files are available at several scales: the 500k here indicates that the file is at a scale of 1:500,000, which is the highest resolution among the cartographic boundary options. The US zip code map is about 60 MB at this resolution; for comparison, the TIGER/Line version is about nine times larger: about 530 MB.
-+ Some areas of the United States do not have zip codes. They are usually rural areas with very low population density. There are a couple of spots in Pennsylvania without zip codes. For comparison, there are considerably more areas without zip codes in New York, largely in the Adirondack region, and vastly more in the western US.
+
++ Some areas of the United States do not have ZCTAs. They are usually rural areas with very low population density. There are a couple of spots in Pennsylvania without ZCTAs. For comparison, there are considerably more areas without them in New York, largely in the Adirondack region, and vastly more in the western US.
+
 + This exercise is just scratching the surface of what could be done to analyze the contributions data. Many other variables could be added as well, including median income, race, education, employment status, and so on.
 
 ## FAQs
 
-1. How does the `.where()` method work?
+1. _How does the `.where()` method work?_
 
     It's a little counterintuitive, at least at first. When called like this, `B = A.where(test,C)`, it says that each element of `B` should be equal to the corresponding element of `A` when the corresponding element of `test` is True; otherwise, the value of `B` should be set to `C` instead of what was in `A`.

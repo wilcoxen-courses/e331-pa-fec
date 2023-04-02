@@ -4,6 +4,9 @@ Spring 2022 PJW
 
 Demonstrate the Pandas where() and fillna() methods, and
 also show several methods for cleaning up messy data.
+
+Note that these operations are here so you can see how to 
+use them but most aren't used in the accompanying exercise.
 """
 
 import pandas as pd
