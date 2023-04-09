@@ -56,7 +56,7 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 ### C. Script join.py
 
-1. Import modules as needed.
+1. Import the numerical python module `numpy` as `np` and import other modules as needed
 
 1. _Read the population data._ Create variable `pop` by reading `pop.csv`. Use a dictionary to set `dtype` for `"state"` and `"zip"` to `str`. The `dtype` setting is less crucial here than in other contexts because neither the state code nor any of the legitimate zip codes start with leading zero. However, if you work with US data you'll make your life easier if you get in the habit of **always** reading FIPS and zip codes as strings.
 
