@@ -66,7 +66,7 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. _Check the merge._ Print the value counts for the merge indicator. Not everything will be `"both"`: expect to see counts for both `"left_only"` (map zip codes that had no contributions) and `"right_only"` (contributions for zip codes that aren't in Pennsylvania).
 
-1. _Check the contributions by merge result._ Create `grouped` by grouping `both` by `"_merge"`. Then create `summary` by applying the `.agg()` method to column `"total"` of `grouped` using the argument `["count","sum","mean"]`. The result will be a dataframe with three columns of aggregate information: the record count for each case of `"_merge"`, and the sum and the mean as well. Note that these are totals by zip code, so the means are much larger than a typical individual contribution.
+1. _Check the contributions by merge result._ Create `grouped` by grouping `both` by `"_merge"`. Then create `summary` by applying the `.agg()` method to column `"total"` of `grouped` using the argument `["count","sum","mean"]`. The result will be a dataframe with three columns of aggregate information: the record count for each case of `"_merge"`, and the sum and the mean as well. Note that these are totals by zip code, so the means are much larger than a typical individual contribution. See the Tips section if you receive a FutureWarning message at grouping step.
 
 1. Print `summary`.
 
@@ -135,3 +135,7 @@ Once you're happy with everything and have committed all of the changes to your 
 1. _How does the `.where()` method work?_
 
     It's a little counterintuitive, at least at first. When called like this, `B = A.where(test,C)`, it says that each element of `B` should be equal to the corresponding element of `A` when the corresponding element of `test` is True; otherwise, the value of `B` should be set to `C` instead of what was in `A`.
+
+2. _What causes the FutureWarning about observed=False?_
+
+    This is due to an internal bug in pandas as of about version 2.1.4. There's nothing you can do about it and it can be ignored.
