@@ -1,11 +1,12 @@
 """
 demo.py
-Spring 2022 PJW
+Spring 2026 PJW
 
 Demonstrate the Pandas where() and fillna() methods, and
-also show several methods for cleaning up messy data.
+also show several methods for cleaning up messy data,
+including lambda functions.
 
-Note that these operations are here so you can see how to 
+Note that these operations are here so you can see how to
 use them but most aren't used in the accompanying exercise.
 """
 
@@ -138,3 +139,50 @@ trim = mod[['name','feet']]
 
 print('\nFinished data:')
 print(trim)
+
+#%%
+#
+#  What if nothing simple works? A lambda function might
+#  be the solution.
+#
+#  Suppose we have a series composed of a mix of scalars
+#  and lists and need to know how many items are in each.
+#
+
+dat = pd.Series( [10,[30,40,50],20,80,[60,70]] )
+print(dat)
+
+#
+#  Can't use apply(len) because some items aren't lists
+#  and don't have len(). The next line causes an error:
+#
+
+# counts = dat.apply(len)
+
+#
+#  However, this will work with no problem
+#
+
+counts = dat.apply( lambda x:len(x) if type(x)==list else 1 )
+print(counts)
+
+#
+#  Another use case is with sorted when sorting is tricky.
+#  Suppose the following list of people needs to be sorted
+#  by last name.
+#
+
+names = [
+    'Malcolm "Mal" Reynolds',
+    'Kaywinnet Lee "Kaylee" Frye',
+    'Jayne "Hero of Canton" Cobb',
+    'Zoe Alleyne Washburne'
+    ]
+
+#
+#  Easy to do with a lambda function
+#
+
+bylast = sorted( names, key=lambda x: x.split()[-1] )
+
+print(bylast)

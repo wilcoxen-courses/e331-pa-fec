@@ -6,7 +6,7 @@ This exercise maps contributions to presidential candidates by party in the 2020
 
 ## Input Data
 
-Several input files are available from the class Google Drive folder: **contrib_clean.pkl**, a pickled version of the aggregated individual contribution data from the previous exercise on campaign contributions; **com_cand_info.csv**, another file from the previous assignment that links committees, candidates, and parties; and **cb_2019_42_zcta510_500k.gpkg**, a geopackage file containing two layers: `state`, which is the boundary for Pennsylvania itself, and `zip`, which has boundaries for all of the state's ZCTAs (zip code tabulation areas, or just zip codes below). See the tips section if you're interested in what the `_500k` in the file name means.
+Several input files are available from the class Google Drive folder: **contrib_clean.pkl**, a pickled version of the aggregated individual contribution data from the previous exercise on campaign contributions; **com_cand_info.csv**, another file from the previous assignment that links committees, candidates, and parties; and **cb_2020_42_zcta520_500k.gpkg**, a geopackage file containing two layers: `state`, which is the boundary for Pennsylvania itself, and `zip`, which has boundaries for all of the state's ZCTAs (zip code tabulation areas, or just zip codes below). See the tips section if you're interested in what the `_500k` in the file name means.
 
 ## Deliverables
 
@@ -16,7 +16,7 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 ### A. Script pop.py
 
-1. _Get the populations of Pennsylvania zip codes._ Follow the approach used in a couple of the previous exercises to retrieve Census variable `B01001_001E`, the total population, using a `for` clause of `"zip code tabulation area:*"` and an `in` clause of `"state:42"`. This time omit `"NAME"` from the query: it just restates the zip code and is not helpful here.
+1. _Get the populations of Pennsylvania zip codes._ Follow the approach used in a couple of the previous exercises to retrieve Census variable `B01001_001E`, the total population, using a `for` clause of `"zip code tabulation area:*"` and no `in` clause. Please use the **2020** ACS5 to match the year of the election. The `in` clause is omitted because the API doesn't allow it with zip codes after 2019, so the query will return data for the whole country. Finally, omit `"NAME"` from the query: it just restates the zip code and is not helpful here.
 
 1. Build a dataframe called `pop` from the server's response.
 
@@ -58,23 +58,31 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Import the numerical python module `numpy` as `np` and import other modules as needed
 
-1. _Read the population data._ Create variable `pop` by reading `pop.csv`. Use a dictionary to set `dtype` for `"state"` and `"zip"` to `str`. The `dtype` setting is less crucial here than in other contexts because neither the state code nor any of the legitimate zip codes start with leading zero. However, if you work with US data you'll make your life easier if you get in the habit of **always** reading FIPS and zip codes as strings.
+1. _Read the population data._ Create variable `pop` by reading `pop.csv`. Use a dictionary to set `dtype` for `"zip"` to `str`. The `dtype` setting is less crucial here than in other contexts because none of the legitimate zip codes start with leading zero. However, if you work with US data you'll make your life easier if you get in the habit of **always** reading FIPS and zip codes as strings.
+
+1. _Read the GIS layer of zip code boundaries._ Now read the zip code layer of geopackage file by setting `geo_zip` to the result of calling `gpd.read_file()` with arguments `"cb_2020_42_zcta520_500k.gpkg"` and `layer="zip"`.
+
+1. Rename `geo_zip` column `"ZCTA5CE20"` to `"zip"`.
+
+1. Eliminate several extraneous columns by trimming `geo_zip` down to its `"zip"` and `"geometry"` columns. An easy way to do this is by setting `geo_zip` to its subset for the list of columns `["zip","geometry"]` via `geo_zip[["zip","geometry"]]`
+
+1. _Join the population data onto zip code boundaries_. Set `geo_pa` to the value of merging `pop` onto `geo_zip`. Use `"zip"` as the join key and set `how` to `"left"`, which will filter out the populations for all zip codes that aren't in Pennsylvania. Also, set validate to `"1:1"` and set `indicator` to `True`.
+
+1. Print the value counts of the merge indicator and then drop it. The count for `"left_only"` shows the number of Pennsylvania zip codes that had no population.
 
 1. _Read the contribution data._ Create variable `contrib` by reading `"by_party.csv"`. Set the `dtype` for `"zip"` to `str`.
 
-1. _Merge the contribution data onto the population data._ Create variable `both` by merging `contrib` onto `pop` using an outer one-to-one join with `"zip"` as the join key and `indicator` set to `True`.
+1. _Join the contribution data onto the spatial data._ Create variable `both` by merging `contrib` onto `geo_pa` using an outer one-to-one join with `"zip"` as the join key and `indicator` set to `True`.
 
-1. _Check the merge._ Print the value counts for the merge indicator. Not everything will be `"both"`: expect to see counts for both `"left_only"` (map zip codes that had no contributions) and `"right_only"` (contributions for zip codes that aren't in Pennsylvania).
+1. _Check the merge._ Print the value counts for the merge indicator. Not everything will be `"both"`: expect to see more than 400 for `"left_only"` (zip codes that had no contributions from addresses in Pennsylvania) and more than 100 for `"right_only"` (invalid zip codes and those for post office boxes, which aren't included in the zip code shape file).
 
-1. _Check the contributions by merge result._ Create `grouped` by grouping `both` by `"_merge"`. Then create `summary` by applying the `.agg()` method to column `"total"` of `grouped` using the argument `["count","sum","mean"]`. The result will be a dataframe with three columns of aggregate information: the record count for each case of `"_merge"`, and the sum and the mean as well. Note that these are totals by zip code, so the means are much larger than a typical individual contribution. See the Tips section if you receive a FutureWarning message at grouping step.
+1. _Check the contributions by merge result._ Create `grouped` by grouping `both` by `"_merge"`. Include the argument `observed=True` in the `.groupby()` call to avoid a warning about a future change in Pandas. Then create `summary` by applying the `.agg()` method to column `"total"` of `grouped` using the argument `["count","sum","mean"]`. The result will be a dataframe with three columns of aggregate information: the record count for each case of `"_merge"`, and the sum and the mean as well.
 
-1. Print `summary`.
+1. Print `summary`. You should see that about $168k, a small part of the total, came from unmatchable `"right_only"` zip codes. Note that these are totals by zip code, so the means are much larger than a typical individual contribution.
 
-1. _Select the usable data._ Now set `trim` to the result of using `.query()` to pick out the records of `both` where `"_merge"` is not equal to `"right_only"` (that is, keep the `"both"` and "`left_only"` records), and then add `.copy()` to the end of the statement to cause Pandas to create a copy of the data rather than a view.
+1. _Select the usable data._ Now set `trim` to the result of using `.query()` to pick out the records of `both` where `"_merge"` is equal to `"both"`, and then add `.copy()` to the end of the statement to cause Pandas to create a copy of the data rather than a view.
 
 1. Drop `"_merge"` from `trim`.
-
-1. Set the amounts in zip codes with no contributions to 0 by calling `.fillna()` on `trim` with arguments `0` and `inplace=True`.
 
 1. Compute per capita contributions by zip code by setting column `"pc"` of `trim` to the `"total"` column divided by the `"pop"` column.
 
@@ -82,19 +90,15 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. Next create a column called `"d_share"` in `trim` giving the share of total contributions that went to Democratic candidates.
 
+1. _Save the joined layer._ Write out the joined layer to layer `"zip"` of geopackage `"joined.gpkg"` by calling `.to_file()` on `trim` using arguments `"joined.gpkg"` and `layer="zip"`. Note that if `"joined.gpkg"` already exists, this call will add (or replace) layer `"zip"` but won't affect any other layers. To be sure that you get a clean copy of the file, you may want to remove any existing version of `"joined.gpkg"` before running this part of the script.
+
+1. _Save the state border._ For convenience, now read the state boundary layer from the original geopackage file by setting `geo_state` to the result of using `gpd.read_file()` to read `"cb_2020_42_zcta520_500k.gpkg"` with `layer="state"`. Then use the `.to_file()` method to write it out to `"joined.gpkg"` using `layer="state"`.
+
+1. Now drop column `"geometry"` from `trim`.
+
 1. Sort `trim` by `"zip"` using `.sort_values()`.
 
 1. Save `trim` as `"join.csv"` using `index=False`. Note that the name is `"join.csv"` to match the name of the script for clarity when looking at the directory in the future.
-
-1. _Read the GIS layer of zip code boundaries._ Now read the zip code layer of geopackage file by setting `geo_zip` to the result of calling `gpd.read_file()` with arguments `"cb_2019_42_zcta510_500k.gpkg"` and `layer="zip"`.
-
-1. _Join the contributions data onto the GIS data._ Set `joined` to the result of doing a left 1:1 join of `trim` onto `geo_zip`. Use `left_on="ZCTA5CE10"` and `right_on="zip"` to set the join keys since the column names are different. Also, set the indicator to `True`. A left join is appropriate because we want to keep all of the zip codes in the shape file and want to discard any zip codes that don't match (the bad zip codes discussed above).
-
-1. Print the value counts of the merge indicator and then drop it.
-
-1. _Save the joined layer._ Write out the joined layer to layer `"zip"` of geopackage `"joined.gpkg"` by calling `.to_file()` on `joined` using arguments `"joined.gpkg"` and `layer="zip"`. Note that if `"joined.gpkg"` already exists, this call will add (or replace) layer `"zip"` but won't affect any other layers. To be sure that you get a clean copy of the file, you may want to remove any existing version of `"joined.gpkg"` before running this part of the script.
-
-1. _Save the state border._ For convenience, now read the state boundary layer from the original geopackage file by setting `geo_state` to the result of using `gpd.read_file()` to read `"cb_2019_42_zcta510_500k.gpkg"` with `layer="state"`. Then use the `.to_file()` method to write it out to `"joined.gpkg"` using `layer="state"`.
 
 ### D. Maps map_party.png, map_pc.png and map_funds.png
 
@@ -135,7 +139,3 @@ Once you're happy with everything and have committed all of the changes to your 
 1. _How does the `.where()` method work?_
 
     It's a little counterintuitive, at least at first. When called like this, `B = A.where(test,C)`, it says that each element of `B` should be equal to the corresponding element of `A` when the corresponding element of `test` is True; otherwise, the value of `B` should be set to `C` instead of what was in `A`.
-
-2. _What causes the FutureWarning about observed=False?_
-
-    This is due to an internal bug in pandas as of about version 2.1.4. There's nothing you can do about it and it can be ignored.
