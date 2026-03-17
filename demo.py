@@ -76,13 +76,25 @@ print( mod )
 #%%
 #
 #  Combine the extracted units with the original unit column using
-#  .where()
+#  .where() or .mask(). The examples below show equivalent ways of
+#  achieving the same result.
 #
 
-mod['comb_units'] = unit_part.where( unit_part!='' , mod['units'] )
+#  Where **keeps** unit_part where the test is true, otherwise it uses
+#  the entry in mod['units']
+
+mod['comb_where'] = unit_part.where( unit_part!='' , mod['units'] )
 
 print('\nAfter combining with original units:')
 print( mod )
+
+#  Mask **replaces** unit_part with mod['units'] when the test is
+#  true, otherwise it keeps unit_part
+
+mod['comb_mask'] = unit_part.mask( unit_part=='' , mod['units'] )
+
+print('\nResults of where() and mask():')
+print( mod[['unit_part','units','comb_where','comb_mask']] )
 
 #%%
 #
@@ -90,7 +102,7 @@ print( mod )
 #  that the default unit is feet when nothing is specified.
 #
 
-mod['comb_units'] = mod['comb_units'].fillna('feet')
+mod['comb_units'] = mod['comb_where'].fillna('feet')
 
 print('\nAfter filling missing units:')
 print( mod )
@@ -150,6 +162,8 @@ print(trim)
 #
 
 dat = pd.Series( [10,[30,40,50],20,80,[60,70]] )
+
+print('\nSeries with mixed data types:')
 print(dat)
 
 #
@@ -164,7 +178,15 @@ print(dat)
 #
 
 counts = dat.apply( lambda x:len(x) if type(x)==list else 1 )
-print(counts)
+
+#
+#  Build a dataframe for convenient display of the results
+#
+
+results = pd.DataFrame( {'data':dat,'count':counts} )
+
+print('\nRaw data and lengths:')
+print(results)
 
 #
 #  Another use case is with sorted when sorting is tricky.
@@ -173,11 +195,15 @@ print(counts)
 #
 
 names = [
-    'Malcolm "Mal" Reynolds',
-    'Kaywinnet Lee "Kaylee" Frye',
-    'Jayne "Hero of Canton" Cobb',
-    'Zoe Alleyne Washburne'
+    'Malcolm Reynolds',
+    'Zoe Alleyne Washburne',
+    'Kaywinnet Lee Frye',
+    'Jayne Cobb',
     ]
+
+print('\nUnsorted names:')
+for name in names:
+    print(name)
 
 #
 #  Easy to do with a lambda function
@@ -185,4 +211,10 @@ names = [
 
 bylast = sorted( names, key=lambda x: x.split()[-1] )
 
-print(bylast)
+#
+#  Print them in order
+#
+
+print('\nSorted by last name:')
+for name in bylast:
+    print(name)
