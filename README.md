@@ -48,7 +48,7 @@ There are seven deliverables: a script called **pop.py** that retrieves populati
 
 1. _Summarize contributions by zip code._ Set `wide` to the result of calling `.unstack()` on `amount` using the argument `"party"`. The result will be a dataframe with one row per zip code and one column per party.
 
-1. A lot of the values in `wide` will be missing because there aren't contributions to every party in every zip code. Set those to zero by calling `.fillna()` on `wide` with arguments `0` and `inplace=True`.
+1. A lot of the values in `wide` will be missing because there aren't contributions to every party in every zip code. Set those to zero by setting `wide` equal to the result of calling `.fillna(0)` on `wide`.
 
 1. _Find total contributions in each zip code._ Add a column to `wide` called `"total"` that is equal to applying `.sum()` to `wide` with `axis="columns"`.
 
